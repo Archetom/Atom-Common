@@ -41,7 +41,7 @@ src/main/java/io/github/archetom/common
 <dependency>
     <groupId>io.github.archetom</groupId>
     <artifactId>atom-common</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.1</version>
 </dependency>
 ```
 

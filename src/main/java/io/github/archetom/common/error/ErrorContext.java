@@ -39,7 +39,7 @@ public class ErrorContext implements Serializable {
     private static final String SPLIT = "|";
 
     /**
-     * 获取当前错误对象
+     * 获取当前错误对象，即最后一次通过 {@link #addError(CommonError)} 追加的错误。
      *
      * @return CommonError 标准错误对象
      */
@@ -63,7 +63,7 @@ public class ErrorContext implements Serializable {
     }
 
     /**
-     * 获取原始错误对象
+     * 获取原始错误对象，即第一次通过 {@link #addError(CommonError)} 追加的根错误。
      *
      * @return 原始错误对象
      */

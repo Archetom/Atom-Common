@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.archetom</groupId>
     <artifactId>atom-common</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <packaging>jar</packaging>
     <name>atom-common</name>
     <description>Common utilities for Atom project</description>
@@ -42,10 +42,12 @@
         <maven.javadoc.plugin.version>3.11.1</maven.javadoc.plugin.version>
         <maven.gpg.plugin.version>3.2.7</maven.gpg.plugin.version>
         <maven.central.plugin.version>0.6.0</maven.central.plugin.version>
+        <maven.surefire.plugin.version>3.5.2</maven.surefire.plugin.version>
 
         <!-- Common -->
         <lombok.version>1.18.36</lombok.version>
         <guava.version>33.3.1-jre</guava.version>
+        <junit.jupiter.version>5.11.4</junit.jupiter.version>
     </properties>
 
     <dependencies>
@@ -63,6 +65,13 @@
             <artifactId>guava</artifactId>
             <version>${guava.version}</version>
         </dependency>
+        <!-- Test -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <distributionManagement>
@@ -79,6 +88,12 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>${maven.jar.plugin.version}</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven.surefire.plugin.version}</version>
             </plugin>
 
             <!-- 生成源码包 -->
