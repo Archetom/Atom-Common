@@ -7,6 +7,7 @@
 - `ErrorCode` 现在会在解析到非 12 位、非 `DE` 前缀或不支持的版本时抛出
   `IllegalArgumentException`，不再静默替换为 `CODE_PROCESSING_ERROR`。
 - `ErrorCode(String errorCode, String version)` 对非 `"0"` 版本显式失败，异常消息包含实际版本值。
+- 迁移至 Maven Central Portal，并新增 Java 17 的 GitHub Actions 验证、Snapshot 发布和签名正式版发布工作流。
 
 ### Compatibility
 

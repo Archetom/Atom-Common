@@ -1,15 +1,16 @@
-VERSION=1.0.0
+MVN ?= mvn
+VERSION ?= 1.0.1
 
 default:install
 
 clean:
-	@mvn clean
+	@$(MVN) clean
 
 install:clean
-	@mvn install -U
+	@$(MVN) install -U -Dgpg.skip=true
 
 deploy:clean
-	@mvn deploy
+	@$(MVN) deploy
 
 version:
-	@mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$(VERSION)
+	@$(MVN) versions:set -DgenerateBackupPoms=false -DnewVersion=$(VERSION)
