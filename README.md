@@ -41,7 +41,7 @@ src/main/java/io/github/archetom/common
 <dependency>
     <groupId>io.github.archetom</groupId>
     <artifactId>atom-common</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.1</version>
 </dependency>
 ```
 
@@ -117,6 +117,31 @@ public class Example {
     }
 }
 ```
+
+## 构建与验证
+
+项目固定使用 Java 17 字节码基线和带 SHA-256 校验的 Maven 3.9.16 Wrapper：
+
+```bash
+sh ./mvnw clean verify -Dgpg.skip=true
+sh ./mvnw test-compile dependency:analyze -DfailOnWarning=true
+```
+
+请优先使用仓库内的 `mvnw`，避免本机 Maven 版本或本地仓库元数据掩盖 CI 中的解析问题。
+
+## 持续集成与发布
+
+GitHub Actions 会在 `main` 推送和 Pull Request 上以 Java 17 执行测试并校验可发布的 JAR、源码包与
+Javadoc 包。Maven Central 的 Snapshot 与正式版发布均由手动工作流触发，且只允许从 `main` 执行；
+正式版工作流会从一个独立的本地仓库再次解析制品，只有公开可下载后才算成功。
+
+在仓库的 `maven-central` GitHub Environment 中配置以下 Actions secrets 后即可发布：
+
+- `CENTRAL_USERNAME`、`CENTRAL_PASSWORD`：Central Portal 发布令牌。
+- `GPG_PRIVATE_KEY`、`GPG_PASSPHRASE`：正式版签名密钥和口令；Snapshot 发布不需要签名密钥。
+
+正式版工作流会使用 Central Portal 自动发布并等待制品公开可用。发布前应更新版本与 `CHANGELOG.md`，
+确认 CI 通过，并确保 Maven Central 中不存在相同坐标；不要将凭据写入 POM、工作流或本地配置文件。
 
 ## 许可证
 

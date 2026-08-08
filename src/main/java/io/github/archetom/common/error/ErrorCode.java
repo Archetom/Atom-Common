@@ -23,6 +23,9 @@ import java.util.List;
  * - **位置 5：错误类型**，表示错误所属的类别。
  * - **位置 6-9：场景码**，表示错误的发生场景或具体事件。
  * - **位置 10-12：具体错误码**，表示详细的错误原因。
+ * <p>
+ * 当前实现仅支持版本 {@value #DEFAULT_VERSION}。解析的错误码或构造方法指定了其他版本时，
+ * 会抛出 {@link IllegalArgumentException}，不会替换为保留错误码。
  */
 @Data
 @Builder
@@ -48,6 +51,7 @@ public class ErrorCode implements Serializable {
     /**
      * 规范版本【第3位】
      */
+    @Builder.Default
     private String version = DEFAULT_VERSION;
 
     /**
@@ -74,12 +78,14 @@ public class ErrorCode implements Serializable {
      * 默认构造方法
      */
     public ErrorCode() {
+        this.version = DEFAULT_VERSION;
     }
 
     /**
      * 构造方法
      *
      * @param errorCode 错误码
+     * @throws IllegalArgumentException 如果错误码不是 12 位、前缀不是 {@code DE}，或包含不支持的版本
      */
     public ErrorCode(String errorCode) {
         buildXDErrorCode(errorCode);
@@ -90,11 +96,11 @@ public class ErrorCode implements Serializable {
      *
      * @param errorCode 错误码
      * @param version   版本
+     * @throws IllegalArgumentException 如果 {@code version} 不受支持，或错误码格式无效
      */
     public ErrorCode(String errorCode, String version) {
-        if (Objects.equal(version, DEFAULT_VERSION)) {
-            buildXDErrorCode(errorCode);
-        }
+        validateSupportedVersion(version);
+        buildXDErrorCode(errorCode);
     }
 
     /**
@@ -106,6 +112,7 @@ public class ErrorCode implements Serializable {
      * @param errorSpecific 具体错误码
      */
     public ErrorCode(String errorLevel, String errorType, String errorScene, String errorSpecific) {
+        this.version = DEFAULT_VERSION;
         this.errorSpecific = errorSpecific;
         this.errorLevel = errorLevel;
         this.errorType = errorType;
@@ -120,8 +127,10 @@ public class ErrorCode implements Serializable {
      * @param errorType     错误类型
      * @param errorScene    错误场景
      * @param errorSpecific 具体错误码
+     * @throws IllegalArgumentException 如果 {@code version} 不受支持
      */
     public ErrorCode(String version, String errorLevel, String errorType, String errorScene, String errorSpecific) {
+        validateSupportedVersion(version);
         this.errorSpecific = errorSpecific;
         this.version = version;
         this.errorLevel = errorLevel;
@@ -130,16 +139,34 @@ public class ErrorCode implements Serializable {
     }
 
     /**
-     * 构造错误码
+     * 构造错误码。
+     * <p>
+     * 此方法采用严格校验：不合法的输入直接抛出异常，而不再静默替换为
+     * {@link ReservedErrorCode#CODE_PROCESSING_ERROR}。错误码属于调用方的业务契约，替换后会掩盖
+     * 原始输入并将业务错误错误地报告为内部处理错误。
      *
      * @param errorCode 错误码
+     * @throws IllegalArgumentException 如果错误码格式或版本不受支持
      */
     private void buildXDErrorCode(String errorCode) {
         try {
             checkString(errorCode, 12);
             splitErrorCode(errorCode);
-        } catch (Throwable e) {
-            splitErrorCode(ReservedErrorCode.CODE_PROCESSING_ERROR);
+            validateSupportedVersion(this.version);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid error code '" + errorCode + "': " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * 校验当前实现能够解析的错误码版本。
+     *
+     * @param version 错误码版本
+     * @throws IllegalArgumentException 如果版本不是 {@value #DEFAULT_VERSION}
+     */
+    private void validateSupportedVersion(String version) {
+        if (!Objects.equal(version, DEFAULT_VERSION)) {
+            throw new IllegalArgumentException("Unsupported error code version: " + version);
         }
     }
 

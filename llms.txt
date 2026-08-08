@@ -1,0 +1,24 @@
+# Atom Common
+
+Small, framework-neutral Java 17 library shared by Atom projects.
+
+## Documentation
+
+- `README.md`: features, usage, build, CI, and publishing setup.
+- `CHANGELOG.md`: released behavior and compatibility notes.
+- `AGENTS.md`: contribution, compatibility, testing, and release rules.
+
+## Source
+
+- `src/main/java/io/github/archetom/common/error`: error codes, standard errors, and error context.
+- `src/main/java/io/github/archetom/common/result`: result and pagination contracts.
+- `src/main/java/io/github/archetom/common/utils`: lightweight profiling utilities.
+- `src/test/java/io/github/archetom/common`: regression and contract tests.
+
+## Build and automation
+
+- `pom.xml`: Java 17 contract, dependencies, build constraints, signed Central publication.
+- `.mvn/wrapper/maven-wrapper.properties`: Maven 3.9.16 distribution and checksum pin.
+- `.github/workflows/ci.yml`: tests, dependency analysis, and publication artifact checks.
+- `.github/workflows/release.yml`: signed Maven Central release and clean-repository resolution check.
+- `.github/workflows/snapshot.yml`: Central Portal snapshot publication and resolution check.

@@ -1,15 +1,46 @@
-VERSION=1.0.0
+MVN := ./mvnw
+PROJECT_VERSION := $(shell awk -F'[<>]' '/^[[:space:]]*<version>/{print $$3; exit}' pom.xml)
+VERSION ?= $(PROJECT_VERSION)
+VERSIONS_PLUGIN_VERSION := $(shell awk -F'[<>]' '/<versions.maven.plugin.version>/{print $$3; exit}' pom.xml)
+GPG_KEY_ARGS = $(if $(strip $(GPG_KEYNAME)),-Dgpg.keyname=$(GPG_KEYNAME),)
 
-default:install
+.PHONY: default clean install verify release-check snapshot-check deploy deploy-snapshot version
+
+default: install
 
 clean:
-	@mvn clean
+	@$(MVN) clean
 
-install:clean
-	@mvn install -U
+install:
+	@$(MVN) clean install -Dgpg.skip=true
 
-deploy:clean
-	@mvn deploy
+verify:
+	@$(MVN) clean verify -Dgpg.skip=true
+
+release-check:
+	@case "$(PROJECT_VERSION)" in \
+	  *-SNAPSHOT) echo "Error: release deployment requires a non-SNAPSHOT project version."; exit 1 ;; \
+	esac
+	@test -z "$$(git status --porcelain)" || { \
+	  echo "Error: release deployment requires a clean Git worktree."; \
+	  git status --short; \
+	  exit 1; \
+	}
+
+snapshot-check:
+	@case "$(PROJECT_VERSION)" in \
+	  *-SNAPSHOT) ;; \
+	  *) echo "Error: snapshot deployment requires a -SNAPSHOT project version."; exit 1 ;; \
+	esac
+
+deploy: release-check
+	@$(MVN) clean deploy $(GPG_KEY_ARGS)
+	@echo "Release deployment validated by Central; publish it explicitly in the Central Portal."
+
+deploy-snapshot: snapshot-check
+	@$(MVN) clean deploy -Dgpg.skip=true
 
 version:
-	@mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$(VERSION)
+	@$(MVN) org.codehaus.mojo:versions-maven-plugin:$(VERSIONS_PLUGIN_VERSION):set \
+	  -DgenerateBackupPoms=false \
+	  -DnewVersion=$(VERSION)
