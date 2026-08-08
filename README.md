@@ -41,7 +41,7 @@ src/main/java/io/github/archetom/common
 <dependency>
     <groupId>io.github.archetom</groupId>
     <artifactId>atom-common</artifactId>
-    <version>1.0.1</version>
+    <version>1.1.0</version>
 </dependency>
 ```
 
@@ -120,7 +120,7 @@ public class Example {
 
 ## 构建与验证
 
-项目固定使用 Java 17 字节码基线和带 SHA-256 校验的 Maven 3.9.16 Wrapper：
+项目与 Atom Archetype 保持一致，固定使用 Java 25 字节码基线和带 SHA-256 校验的 Maven 3.9.16 Wrapper：
 
 ```bash
 sh ./mvnw clean verify -Dgpg.skip=true
@@ -131,7 +131,7 @@ sh ./mvnw test-compile dependency:analyze -DfailOnWarning=true
 
 ## 持续集成与发布
 
-GitHub Actions 会在 `main` 推送和 Pull Request 上以 Java 17 执行测试并校验可发布的 JAR、源码包与
+GitHub Actions 会在 `main` 推送和 Pull Request 上以 Java 25 执行测试并校验可发布的 JAR、源码包与
 Javadoc 包。Maven Central 的 Snapshot 与正式版发布均由手动工作流触发，且只允许从 `main` 执行；
 正式版工作流会从一个独立的本地仓库再次解析制品，只有公开可下载后才算成功。
 

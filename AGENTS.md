@@ -14,7 +14,7 @@ sh ./mvnw clean verify -Dgpg.skip=true
 sh ./mvnw test-compile dependency:analyze -DfailOnWarning=true
 ```
 
-Use the checked-in Maven Wrapper. The project publishes Java 17-compatible bytecode and enforces Maven 3.9.16
+Use the checked-in Maven Wrapper. The project publishes Java 25 bytecode and enforces Maven 3.9.16
 or newer.
 
 ## Library rules

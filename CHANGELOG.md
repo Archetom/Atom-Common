@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.1.0] - 2026-08-08
+
+### Changed
+
+- 将编译、测试、CI 和发布运行时从 Java 17 对齐至 Atom Archetype 使用的 Java 25。
+- 将 Lombok 固定为 `1.18.46`、JUnit Jupiter 对齐至 Spring Boot 4.1.0 管理的 `6.0.3`，并继续使用
+  Guava `33.6.0-jre`。
+- 发布坐标由 `io.github.archetom:atom-common:1.0.1` 更新为 `1.1.0`。
+
+### Compatibility
+
+`1.1.0` 生成 Java 25 字节码，消费方构建和运行时必须使用 Java 25 或更高版本；仍需兼容 Java 17 的
+项目应继续使用 `1.0.x`。
+
 ## [1.0.1] - 2026-08-08
 
 ### Changed

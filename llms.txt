@@ -1,6 +1,6 @@
 # Atom Common
 
-Small, framework-neutral Java 17 library shared by Atom projects.
+Small, framework-neutral Java 25 library shared by Atom projects.
 
 ## Documentation
 
@@ -17,7 +17,7 @@ Small, framework-neutral Java 17 library shared by Atom projects.
 
 ## Build and automation
 
-- `pom.xml`: Java 17 contract, dependencies, build constraints, signed Central publication.
+- `pom.xml`: Java 25 contract, dependencies, build constraints, signed Central publication.
 - `.mvn/wrapper/maven-wrapper.properties`: Maven 3.9.16 distribution and checksum pin.
 - `.github/workflows/ci.yml`: tests, dependency analysis, and publication artifact checks.
 - `.github/workflows/release.yml`: signed Maven Central release and clean-repository resolution check.
