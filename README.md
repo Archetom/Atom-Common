@@ -1,41 +1,17 @@
 # Atom Common
 
-`Atom Common` 是一个通用的 Java 工具库，提供了常用的错误处理、结果封装、分页功能以及性能分析工具，用于 [Atom Archetype](https://github.com/Archetom/atom-archetype) 项目。
+Atom Common 是 Atom 项目的共享基础类型库，提供错误码、错误上下文、统一结果、分页结果和轻量级耗时分析。
+它由 [Atom Archetype](https://github.com/Archetom/atom-archetype) 生成的项目使用，也可以独立引入普通
+Java 应用；库本身不依赖 Spring。
 
----
+## 环境要求
 
-## 特性
+- Atom Common 1.1.x：Java 25 或更高版本
+- Atom Common 1.0.x：Java 17 或更高版本
 
-- **错误处理**：提供标准化的错误码 (`ErrorCode`) 和错误上下文 (`ErrorContext`) 支持，便于统一管理和传递错误信息。
-- **结果封装**：通过 `Result` 和 `Pager` 类支持标准化的服务结果返回和分页结果封装。
-- **性能分析**：提供 `Profiler` 工具类，用于统计线程执行时间的分布和耗时。
+从源码构建时无需预装指定版本的 Maven，仓库已包含 Maven 3.9.16 Wrapper。
 
----
-
-## 项目结构
-
-```plaintext
-src/main/java/io/github/archetom/common
-├── error                       # 错误处理模块
-│   ├── CommonError.java        # 标准错误对象
-│   ├── ErrorCode.java          # 标准错误码
-│   ├── ErrorContext.java       # 错误上下文
-│   ├── ReservedErrorCode.java  # 保留错误码定义
-├── result                      # 结果封装模块
-│   ├── BaseToString.java       # toString 包装工具
-│   ├── Pager.java              # 分页结果封装
-│   ├── Result.java             # RPC 服务结果封装
-├── utils                       # 工具类模块
-│   ├── Profiler.java           # 性能分析工具
-```
-
----
-
-## 快速开始
-
-### 1. 添加依赖
-
-在你的 `pom.xml` 中引入 `Atom Common` 库：
+## 添加依赖
 
 ```xml
 <dependency>
@@ -45,104 +21,87 @@ src/main/java/io/github/archetom/common
 </dependency>
 ```
 
-### 2. 使用示例
+## 主要类型
 
-#### 1. 错误码定义与处理
+| 类型 | 用途 |
+| --- | --- |
+| `ErrorCode` | 组装和解析统一的 12 位错误码 |
+| `CommonError` | 描述错误码、错误信息和发生位置 |
+| `ErrorContext` | 按发生顺序保存一条错误传播链 |
+| `Result<T>` | 表示成功状态、结果数据和错误上下文 |
+| `Pager<T>` | 表示分页数据，并支持保持分页信息的类型转换 |
+| `Profiler` | 记录当前线程内可嵌套的执行耗时 |
+
+### 错误码与错误上下文
+
+当前错误码格式为 `DE + 版本 + 级别 + 类型 + 场景码 + 具体码`。版本固定为 `0`，各字段长度分别为
+`2 + 1 + 1 + 1 + 4 + 3`。解析非法长度、非法前缀或不支持的版本时会抛出
+`IllegalArgumentException`。
 
 ```java
 import io.github.archetom.common.error.CommonError;
 import io.github.archetom.common.error.ErrorCode;
 import io.github.archetom.common.error.ErrorContext;
 
-public class Example {
-    public static void main(String[] args) {
-        // 定义错误码
-        ErrorCode errorCode = new ErrorCode("0", "1", "0", "0001", "001");
+ErrorCode code = new ErrorCode("1", "0", "0001", "001");
+CommonError error = new CommonError(code, "客户不存在", "customer-service");
 
-        // 创建标准错误对象
-        CommonError error = new CommonError(errorCode, "系统异常", "系统模块");
+ErrorContext context = new ErrorContext();
+context.addError(error);
 
-        // 添加到错误上下文
-        ErrorContext errorContext = new ErrorContext();
-        errorContext.addError(error);
-
-        // 打印错误上下文摘要
-        System.out.println(errorContext.toDigest());
-    }
-}
+System.out.println(code);                    // DE0100001001
+System.out.println(context.fetchRootError());
+System.out.println(context.fetchCurrentError());
 ```
 
-#### 2. 分页结果封装
+`fetchRootError()` 返回最早加入的错误，`fetchCurrentError()` 返回最近加入的错误。
+
+### 分页结果转换
 
 ```java
 import io.github.archetom.common.result.Pager;
 
-import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
-public class Example {
-    public static void main(String[] args) {
-        Pager<String> pager = new Pager<>(
-            Arrays.asList("记录1", "记录2", "记录3"), // 数据列表
-            10,  // 每页大小
-            1,   // 当前页码
-            30L, // 总条目数
-            null // 额外元数据
-        );
+Pager<String> page = new Pager<>(
+        List.of("10", "20"),
+        20,
+        1,
+        Pager.NO_TOTAL_NUM,
+        Map.of("source", "search")
+);
 
-        System.out.println(pager);
-    }
-}
+Pager<Integer> converted = page.map(Integer::valueOf);
 ```
 
-#### 3. 性能分析工具
+`map` 会保留页码、每页数量、总数和元数据。无法或无需计算总数时，可使用 `Pager.NO_TOTAL_NUM`。
+
+### 耗时分析
 
 ```java
 import io.github.archetom.common.utils.Profiler;
 
-public class Example {
-    public static void main(String[] args) throws InterruptedException {
-        Profiler.start("任务开始");
-        Thread.sleep(100); // 模拟任务1耗时
+Profiler.start("request");
+Profiler.enter("load-customer");
+// 执行业务逻辑
+Profiler.release();
+Profiler.release();
 
-        Profiler.enter("子任务1");
-        Thread.sleep(200); // 模拟任务2耗时
-        Profiler.release();
-
-        Profiler.enter("子任务2");
-        Thread.sleep(300); // 模拟任务3耗时
-        Profiler.release();
-
-        Profiler.release(); // 结束主任务
-        System.out.println(Profiler.dump());
-    }
-}
+System.out.println(Profiler.dump());
+Profiler.reset();
 ```
 
-## 构建与验证
+`Profiler` 使用线程本地状态，使用结束后应调用 `reset()` 清理。
 
-项目与 Atom Archetype 保持一致，固定使用 Java 25 字节码基线和带 SHA-256 校验的 Maven 3.9.16 Wrapper：
+## 从源码构建
 
 ```bash
 sh ./mvnw clean verify -Dgpg.skip=true
-sh ./mvnw test-compile dependency:analyze -DfailOnWarning=true
 ```
 
-请优先使用仓库内的 `mvnw`，避免本机 Maven 版本或本地仓库元数据掩盖 CI 中的解析问题。
-
-## 持续集成与发布
-
-GitHub Actions 会在 `main` 推送和 Pull Request 上以 Java 25 执行测试并校验可发布的 JAR、源码包与
-Javadoc 包。Maven Central 的 Snapshot 与正式版发布均由手动工作流触发，且只允许从 `main` 执行；
-正式版工作流会从一个独立的本地仓库再次解析制品，只有公开可下载后才算成功。
-
-在仓库的 `maven-central` GitHub Environment 中配置以下 Actions secrets 后即可发布：
-
-- `CENTRAL_USERNAME`、`CENTRAL_PASSWORD`：Central Portal 发布令牌。
-- `GPG_PRIVATE_KEY`、`GPG_PASSPHRASE`：正式版签名密钥和口令；Snapshot 发布不需要签名密钥。
-
-正式版工作流会使用 Central Portal 自动发布并等待制品公开可用。发布前应更新版本与 `CHANGELOG.md`，
-确认 CI 通过，并确保 Maven Central 中不存在相同坐标；不要将凭据写入 POM、工作流或本地配置文件。
+该命令会运行测试，并生成主 JAR、源码包和 Javadoc 包。版本变更记录见 [CHANGELOG.md](CHANGELOG.md)。
 
 ## 许可证
 
-本项目采用 [Apache 2.0 License](https://www.apache.org/licenses/LICENSE-2.0) 开源。
+本项目采用 [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0) 许可证。

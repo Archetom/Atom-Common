@@ -4,7 +4,7 @@ Small, framework-neutral Java 25 library shared by Atom projects.
 
 ## Documentation
 
-- `README.md`: features, usage, build, CI, and publishing setup.
+- `README.md`: user-facing requirements, dependency coordinates, core API examples, and source build command.
 - `CHANGELOG.md`: released behavior and compatibility notes.
 - `AGENTS.md`: contribution, compatibility, testing, and release rules.
 

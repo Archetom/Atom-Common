@@ -8,6 +8,7 @@
 - 将 Lombok 固定为 `1.18.46`、JUnit Jupiter 对齐至 Spring Boot 4.1.0 管理的 `6.0.3`，并继续使用
   Guava `33.6.0-jre`。
 - 发布坐标由 `io.github.archetom:atom-common:1.0.1` 更新为 `1.1.0`。
+- 重写项目首页，聚焦使用要求、依赖坐标和核心 API，移除面向仓库维护者的发布配置细节。
 
 ### Compatibility
 
