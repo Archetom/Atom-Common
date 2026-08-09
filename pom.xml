@@ -59,7 +59,7 @@
         <!-- Keep overlapping versions aligned with Spring Boot 4.1.0 in Atom Archetype. -->
         <lombok.version>1.18.46</lombok.version>
         <guava.version>33.6.0-jre</guava.version>
-        <junit.jupiter.version>6.0.3</junit.jupiter.version>
+        <junit.jupiter.version>6.1.2</junit.jupiter.version>
     </properties>
 
     <dependencies>
