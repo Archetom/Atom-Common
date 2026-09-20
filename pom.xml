@@ -51,7 +51,7 @@
         <maven.gpg.plugin.version>3.2.8</maven.gpg.plugin.version>
         <maven.central.plugin.version>0.11.0</maven.central.plugin.version>
         <maven.surefire.plugin.version>3.6.0</maven.surefire.plugin.version>
-        <versions.maven.plugin.version>2.21.0</versions.maven.plugin.version>
+        <versions.maven.plugin.version>2.22.0</versions.maven.plugin.version>
         <central.autoPublish>false</central.autoPublish>
         <central.waitUntil>validated</central.waitUntil>
 
