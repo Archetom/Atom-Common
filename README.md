@@ -9,7 +9,7 @@ Java 应用；库本身不依赖 Spring。
 - Atom Common 1.1.x：Java 25 或更高版本
 - Atom Common 1.0.x：Java 17 或更高版本
 
-从源码构建时无需预装指定版本的 Maven，仓库已包含 Maven 3.9.16 Wrapper。
+从源码构建时无需预装指定版本的 Maven，仓库已包含 Maven 3.10.0 Wrapper。
 
 ## 添加依赖
 
