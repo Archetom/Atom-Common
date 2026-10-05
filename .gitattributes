@@ -1,0 +1,3 @@
+# Store wrapper scripts with normalized LF; check out the Windows wrapper with CRLF.
+/mvnw text eol=lf
+/mvnw.cmd text eol=crlf
