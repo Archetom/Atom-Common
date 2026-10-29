@@ -6,18 +6,22 @@ Java 应用；库本身不依赖 Spring。
 
 ## 环境要求
 
+- Atom Common 1.2.x：Java 27 或更高版本
 - Atom Common 1.1.x：Java 25 或更高版本
 - Atom Common 1.0.x：Java 17 或更高版本
 
-从源码构建时无需预装指定版本的 Maven，仓库已包含 Maven 3.10.0 Wrapper。
+从源码构建需要 JDK 27 或更高版本，使用仓库提供的 Maven 3.10.0 Wrapper（Wrapper 3.3.4），
+无需单独安装 Maven。
 
 ## 添加依赖
+
+已发布的稳定版本：
 
 ```xml
 <dependency>
     <groupId>io.github.archetom</groupId>
     <artifactId>atom-common</artifactId>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
 </dependency>
 ```
 
@@ -95,6 +99,8 @@ Profiler.reset();
 `Profiler` 使用线程本地状态，使用结束后应调用 `reset()` 清理。
 
 ## 从源码构建
+
+确保 `JAVA_HOME` 指向 JDK 27 或更高版本，再运行：
 
 ```bash
 sh ./mvnw clean verify -Dgpg.skip=true

@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.2.0] - 2026-10-29
+
+### Changed
+
+- 发布版本升级为 `1.2.0`，编译、测试、CI 和发布运行时从 Java 25 升级到 Java 27。
+- 将最低 Maven 版本从 `3.9.16` 提升为 `3.10.0`，与已有的 Maven Wrapper 分发版本对齐；
+  Maven `3.10.0` 和 Wrapper `3.3.4` 均为截至 2026-10-29 的最新稳定版。
+- 升级 Maven Surefire Plugin `3.6.0` → `3.6.1`、Central Publishing Maven Plugin
+  `0.11.0` → `0.12.0`、Versions Maven Plugin `2.22.0` → `2.23.0`。
+  Central Publishing `0.12.0` 修复了 Maven 3.10.0 暂存额外元数据导致 Central 拒收的问题。
+- CI、正式版和 Snapshot 发布工作流统一升级 `actions/setup-java` `6.0.1` → `6.1.0`，
+  保持完整提交 SHA 固定和 Temurin 最新 Java 27 补丁版本解析。
+- 核对并保留已是最新稳定版的 Lombok `1.18.48`（支持 JDK 27）、Guava `33.7.2-jre`、
+  JUnit Jupiter `6.1.3`、其余构建插件及 `actions/checkout` `7.0.1`。
+
+### Compatibility
+
+`1.2.0` 生成 Java 27 字节码，消费方构建和运行时必须使用 Java 27 或更高版本；仍需兼容 Java 25
+的项目应继续使用已发布的 `1.1.x`。公共 API、序列化字段和现有空值处理契约不变。
+
 ## [1.1.0] - 2026-08-08
 
 ### Changed
